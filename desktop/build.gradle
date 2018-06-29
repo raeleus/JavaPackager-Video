@@ -39,7 +39,7 @@ dist.dependsOn classes
 // creates application bundle (executable + runtime)
 task javaPackager(type: Exec, dependsOn: dist) {
     workingDir project.projectDir
-    commandLine = [
+    def commands = [
         'javapackager',
         '-deploy',
         '-nosign',
@@ -49,6 +49,17 @@ task javaPackager(type: Exec, dependsOn: dist) {
         '-name', project.appName,
         '-appclass', project.mainClassName
     ]
+    
+    def osName = System.getProperty('os.name').toLowerCase(Locale.ROOT)
+    if (osName.contains('windows')) {
+        commands << "-Bicon=${project.projectDir}/logo.ico"
+    } else if (osName.contains('linux')) {
+        commands << "-Bicon=${project.projectDir}/logo.png"
+    } else if (osName.contains('mac')) {
+        commands << "-Bicon=${project.projectDir}/logo.icns"
+    }
+    
+    commandLine = commands
 }
 
 // removes bloated runtime created by javapackager
