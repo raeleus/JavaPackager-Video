@@ -51,6 +51,15 @@ task javaPackager(type: Exec, dependsOn: dist) {
     ]
 }
 
+// removes bloated runtime created by javapackager
+task cleanPackagerRuntime(dependsOn: javaPackager) {
+    doLast() {
+        File runtimeFile = new File("${buildDir}/distribution/${project.appName}/runtime")
+        runtimeFile.deleteDir()
+        System.out.println("deleting bloated runtime in " + runtimeFile)
+    }
+}
+
 eclipse {
     project {
         name = appName + "-desktop"
