@@ -57,6 +57,7 @@ task javaPackager(type: Exec, dependsOn: dist) {
         commands << "-Bicon=${project.projectDir}/logo.png"
     } else if (osName.contains('mac')) {
         commands << "-Bicon=${project.projectDir}/logo.icns"
+        commands << "-BjvmOptions=-XstartOnFirstThread"
     }
     
     commandLine = commands
