@@ -60,6 +60,30 @@ task cleanPackagerRuntime(dependsOn: javaPackager) {
     }
 }
 
+// creates a replacement runtime via jlink command (much smaller than jpackager)
+task createFinalAppBundle(type: Exec, dependsOn: [cleanPackagerRuntime]) {
+    def jdk = System.getProperty("java.home")
+
+    workingDir project.projectDir
+    commandLine = [
+        'jlink',
+        '-p', "${jdk}/jmods",
+        '--add-modules', 'java.base,java.desktop,jdk.unsupported',
+        '--strip-debug',
+        '--no-header-files',
+        '--no-man-pages',
+        '--strip-native-commands',
+        "--vm=server",
+        "--compress=2",
+        '--output', "${buildDir}/distribution/${project.appName}/runtime"
+    ]
+
+    doLast{
+        System.out.println("Application '${project.name}' packaged.")
+        System.out.println(" -> location: ${buildDir}/distribution/${project.name}/")
+    }
+}
+
 eclipse {
     project {
         name = appName + "-desktop"
